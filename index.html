@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task It</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Create a Task</h2>
+
+        <form id="taskForm">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" id="title" class="form-control" placeholder="Enter title here" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" class="form-control" placeholder="Enter description here"
+                rows="6"
+                    required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="date" class="form-label">Due Date</label>
+                <input type="date" id="date" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="priority" class="form-label">Priority</label>
+                <select id="priority" class="form-select" required>
+                    <option value="" disabled selected>Select priority</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Task</button>
+        </form>
+
+        <hr class="my-4">
+
+        <div id="taskList" class="mt-3">
+            <!-- Tasks will appear here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module" src="./scripts/controller/controller.js"></script>
+
+    
+</body>
+
+</html>
