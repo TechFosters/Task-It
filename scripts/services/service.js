@@ -12,3 +12,13 @@ export function getTasksService() {
     console.log('Inside Service -> getTasksService called -> all tasks', tasks)
     return tasks;
 }
+
+//7.2
+export function deleteTaskService(taskId){
+    console.log('Inside Service -> Deleting task with ID:', taskId);
+    console.log("Deleting task with id", taskId)
+    console.log("before Delete", tasks)
+    tasks = tasks.filter(task => task.id !== String(taskId))
+    console.log('after delete', tasks)
+
+}

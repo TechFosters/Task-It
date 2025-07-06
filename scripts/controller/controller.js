@@ -1,6 +1,6 @@
 //all dom related interactions
 
-import { addTaskService, getTasksService } from "../services/service.js";
+import { addTaskService, deleteTaskService, getTasksService } from "../services/service.js";
 import Task from "../model/model.js";
 
 //1 
@@ -33,7 +33,7 @@ function handleAddTask(event) {
 
     //3.3 create new task object
 
-    const task = new Task(Date.now().toString, title, description, dueDate, 'pending', priority)
+    const task = new Task(Date.now().toString(), title, description, dueDate, 'pending', priority)
     console.log("Inside controller -> task created", task)
 
     //3.4 send the task created above to service.js to store in an array
@@ -66,14 +66,29 @@ function renderTasks() {
             <p>${task.description}</p>
             <p><strong>Due:</strong> ${task.dueDate}</p>
             <p><strong>Priority:</strong> ${task.priority}</p>
-            <span class="badge bg-warning text-dark">${task.status}</span>`
+            <span class="badge bg-warning text-dark">${task.status}</span>
 
+            <button class="btn btn-sm btn-danger mt-2 delete-btn" data-id="${task.id}">
+            Delete
+            </button>` //6
 
         taskList.appendChild(card)
 
 
     })
 
+
+    //7. delete buttons
+
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+
+    deleteButtons.forEach((btn) => {
+        btn.addEventListener('click', function(){
+            const id = this.getAttribute('data-id');
+            deleteTaskService(id) // 7.1 send this id to task service to get the task deleted
+            renderTasks();
+        })
+    })
     console.log('Inside controller -> renderTask', tasks)
 }
 
