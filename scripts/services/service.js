@@ -22,3 +22,8 @@ export function deleteTaskService(taskId){
     console.log('after delete', tasks)
 
 }
+
+export function updateTaskService(updatedTask){
+    tasks = tasks.map(task => task.id === updatedTask.id ? updatedTask: task)
+    console.log("Inside Service =>  Task updated:", updatedTask);
+}

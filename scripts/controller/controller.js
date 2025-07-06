@@ -1,7 +1,11 @@
 //all dom related interactions
 
-import { addTaskService, deleteTaskService, getTasksService } from "../services/service.js";
+import { addTaskService, deleteTaskService, getTasksService, updateTaskService } from "../services/service.js";
 import Task from "../model/model.js";
+
+let isEditMode = false;
+let editTaskId = null;
+
 
 //1 
 window.addEventListener('load', init);
@@ -31,7 +35,19 @@ function handleAddTask(event) {
         return;
     }
 
-    //3.3 create new task object
+    //10
+
+    if(isEditMode){
+        const updatedTask = new Task(editTaskId, title, description, dueDate, 'pending', priority);
+        updateTaskService(updatedTask)
+
+        //once updated reset the editMode to false and editTaskId to null and submit button text to Add Task
+        isEditMode = false;
+        editTaskId = null;
+        document.querySelector('button[type="submit"]').innerText = "Add Task";
+
+    } else{
+        //3.3 create new task object
 
     const task = new Task(Date.now().toString(), title, description, dueDate, 'pending', priority)
     console.log("Inside controller -> task created", task)
@@ -39,6 +55,9 @@ function handleAddTask(event) {
     //3.4 send the task created above to service.js to store in an array
 
     addTaskService(task);
+    }
+
+    
 
     //3.5 
     renderTasks()
@@ -69,8 +88,11 @@ function renderTasks() {
             <span class="badge bg-warning text-dark">${task.status}</span>
 
             <button class="btn btn-sm btn-danger mt-2 delete-btn" data-id="${task.id}">
-            Delete
-            </button>` //6
+            Delete 
+            </button>
+             <button class="btn btn-sm btn-warning mt-2 edit-btn" data-id="${task.id}">
+            Edit
+            </button>` //6, 8
 
         taskList.appendChild(card)
 
@@ -83,12 +105,41 @@ function renderTasks() {
     const deleteButtons = document.querySelectorAll('.delete-btn');
 
     deleteButtons.forEach((btn) => {
-        btn.addEventListener('click', function(){
+        btn.addEventListener('click', function () {
             const id = this.getAttribute('data-id');
             deleteTaskService(id) // 7.1 send this id to task service to get the task deleted
             renderTasks();
         })
     })
+
+
+    //9. editButtons
+
+    const editButtons = document.querySelectorAll('.edit-btn');
+    editButtons.forEach((btn)=>{
+        btn.addEventListener('click', function(){
+            const id = this.getAttribute('data-id');
+            const taskToEdit = getTasksService().find(task => task.id === id); //returns object with matching id
+
+            if(taskToEdit){
+                document.getElementById('title').value = taskToEdit.title;
+                document.getElementById('description').value = taskToEdit.description;
+                document.getElementById('date').value = taskToEdit.dueDate;
+                document.getElementById('priority').value = taskToEdit.priority;
+
+                isEditMode = true;
+                editTaskId = taskToEdit.id;
+        
+                document.querySelector('button[type="submit"]').innerText = "Update Task";
+            }
+     
+        })
+
+        
+
+
+    })
+
     console.log('Inside controller -> renderTask', tasks)
 }
 
