@@ -27,3 +27,17 @@ export function updateTaskService(updatedTask){
     tasks = tasks.map(task => task.id === updatedTask.id ? updatedTask: task)
     console.log("Inside Service =>  Task updated:", updatedTask);
 }
+
+export function sortTasksService(key){
+
+    if(key === 'priority'){
+        const priorityOrder = {high: 1, medium: 2, low: 3}
+        tasks.sort((a,b)=> priorityOrder[a.priority] - priorityOrder[b.priority]) //this returns sorted array
+    } else if(key === 'dueDate'){
+        tasks.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate))
+    } else if(key === 'title'){
+        tasks.sort((a,b) => a.title.localeCompare(b.title));
+    }
+
+
+}

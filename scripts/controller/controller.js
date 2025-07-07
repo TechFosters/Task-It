@@ -1,6 +1,6 @@
 //all dom related interactions
 
-import { addTaskService, deleteTaskService, getTasksService, updateTaskService } from "../services/service.js";
+import { addTaskService, deleteTaskService, getTasksService, sortTasksService, updateTaskService } from "../services/service.js";
 import Task from "../model/model.js";
 
 let isEditMode = false;
@@ -34,6 +34,8 @@ function handleAddTask(event) {
         alert("All fields are required");
         return;
     }
+
+    
 
     //10
 
@@ -138,6 +140,13 @@ function renderTasks() {
         
 
 
+    })
+
+    //10.
+    document.getElementById('sortBy').addEventListener('change', function(){
+        const sortKey = this.value  //this refers to dropdown field
+        sortTasksService(sortKey);
+        renderTasks()
     })
 
     console.log('Inside controller -> renderTask', tasks)
