@@ -35,7 +35,16 @@ function handleAddTask(event) {
         return;
     }
 
-    
+    //11 user can't select a past date
+    const dueDateObj = new Date(dueDate);
+    const today = new Date();
+
+    today.setHours(0,0,0,0)
+
+    if(dueDateObj < today){
+        alert("Please enter a due date that is today or in future")
+        return
+    }
 
     //10
 
