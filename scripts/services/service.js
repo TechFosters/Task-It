@@ -1,11 +1,29 @@
 //logic goes here
 
+import Task from "../model/model.js";
+
 //4
 let tasks = [];
 
+//local storage implemnetation
+
+
+export function saveTasksToLocal(){
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    //console.log(localStorage.setItem('tasks', JSON.stringify(tasks)));
+}
+
+export function loadTaskFromLocal(){
+    const saved = localStorage.getItem('tasks');
+    if(saved){
+        const parsed = JSON.parse(saved);
+        tasks = parsed.map((obj)=> new Task(obj.id, obj.title, obj.description, obj.dueDate, obj.status, obj.priority))
+    }
+}
 export function addTaskService(task) {
     console.log("Inside service  -> Adding task to memory array", task)
     tasks.push(task)
+    saveTasksToLocal();
 }
 
 export function getTasksService() {
@@ -38,6 +56,13 @@ export function sortTasksService(key){
     } else if(key === 'title'){
         tasks.sort((a,b) => a.title.localeCompare(b.title));
     }
+}
 
+   export function searchTaskService(keyword){
+    if(!keyword){
+        return tasks;
+    }
 
+    const filtered = tasks.filter((task)=> task.title.toLowerCase().startsWith(keyword));
+    return filtered;
 }

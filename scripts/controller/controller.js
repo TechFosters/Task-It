@@ -1,6 +1,6 @@
 //all dom related interactions
 
-import { addTaskService, deleteTaskService, getTasksService, sortTasksService, updateTaskService } from "../services/service.js";
+import { addTaskService, deleteTaskService, getTasksService, loadTaskFromLocal, saveTasksToLocal, searchTaskService, sortTasksService, updateTaskService } from "../services/service.js";
 import Task from "../model/model.js";
 
 let isEditMode = false;
@@ -12,7 +12,8 @@ window.addEventListener('load', init);
 
 //2
 function init() {
-
+    loadTaskFromLocal();
+    renderTasks();
     const form = document.getElementById('taskForm')
     form.addEventListener('submit', handleAddTask);
 }
@@ -66,6 +67,7 @@ function handleAddTask(event) {
     //3.4 send the task created above to service.js to store in an array
 
     addTaskService(task);
+    
     }
 
     
@@ -79,14 +81,14 @@ function handleAddTask(event) {
 
 //5 function to render tasks in the DOM
 
-function renderTasks() {
+function renderTasks(taskArray = getTasksService()) {
     const taskList = document.getElementById('taskList');
     taskList.innerHTML = '' //clear previous cards
 
-    const tasks = getTasksService(); //this will return task array
+   // const tasks = getTasksService(); //this will return task array
 
     //rendering each task in card format
-    tasks.map((task) => {
+    taskArray.map((task) => {
 
         const card = document.createElement('div')
         card.classList = 'card mb-3 p-3';
@@ -153,11 +155,20 @@ function renderTasks() {
 
     //10.
     document.getElementById('sortBy').addEventListener('change', function(){
+        console.log(this)
         const sortKey = this.value  //this refers to dropdown field
         sortTasksService(sortKey);
         renderTasks()
     })
 
-    console.log('Inside controller -> renderTask', tasks)
+    //11.
+    document.getElementById('search').addEventListener('input', function(){
+        console.log("this", this.value)
+        const keyword = this.value.trim().toLowerCase();
+        const filteredTasks = searchTaskService(keyword)
+        renderTasks(filteredTasks)
+    })
+
+    console.log('Inside controller -> renderTask', taskArray)
 }
 
