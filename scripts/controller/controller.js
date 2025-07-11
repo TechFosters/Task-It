@@ -1,6 +1,6 @@
 //all dom related interactions
 
-import { addTaskService, deleteTaskService, getTasksService, loadTaskFromLocal, saveTasksToLocal, searchTaskService, sortTasksService, updateTaskService } from "../services/service.js";
+import { addTaskService, deleteTaskService, getTasksService, loadTaskFromLocal, saveTasksToLocal, searchTaskService, sortTasksService, toggleTaskStatusService, updateTaskService } from "../services/service.js";
 import Task from "../model/model.js";
 
 let isEditMode = false;
@@ -40,16 +40,16 @@ function handleAddTask(event) {
     const dueDateObj = new Date(dueDate);
     const today = new Date();
 
-    today.setHours(0,0,0,0)
+    today.setHours(0, 0, 0, 0)
 
-    if(dueDateObj < today){
+    if (dueDateObj < today) {
         alert("Please enter a due date that is today or in future")
         return
     }
 
     //10
 
-    if(isEditMode){
+    if (isEditMode) {
         const updatedTask = new Task(editTaskId, title, description, dueDate, 'pending', priority);
         updateTaskService(updatedTask)
 
@@ -58,19 +58,19 @@ function handleAddTask(event) {
         editTaskId = null;
         document.querySelector('button[type="submit"]').innerText = "Add Task";
 
-    } else{
+    } else {
         //3.3 create new task object
 
-    const task = new Task(Date.now().toString(), title, description, dueDate, 'pending', priority)
-    console.log("Inside controller -> task created", task)
+        const task = new Task(Date.now().toString(), title, description, dueDate, 'pending', priority)
+        console.log("Inside controller -> task created", task)
 
-    //3.4 send the task created above to service.js to store in an array
+        //3.4 send the task created above to service.js to store in an array
 
-    addTaskService(task);
-    
+        addTaskService(task);
+
     }
 
-    
+
 
     //3.5 
     renderTasks()
@@ -85,7 +85,7 @@ function renderTasks(taskArray = getTasksService()) {
     const taskList = document.getElementById('taskList');
     taskList.innerHTML = '' //clear previous cards
 
-   // const tasks = getTasksService(); //this will return task array
+    // const tasks = getTasksService(); //this will return task array
 
     //rendering each task in card format
     taskArray.map((task) => {
@@ -98,7 +98,17 @@ function renderTasks(taskArray = getTasksService()) {
             <p>${task.description}</p>
             <p><strong>Due:</strong> ${task.dueDate}</p>
             <p><strong>Priority:</strong> ${task.priority}</p>
-            <span class="badge bg-warning text-dark">${task.status}</span>
+            
+
+            <div class ="form-check">
+            <input type ="checkbox" class="form-check-input status-toggle"  data-id = ${task.id} ${task.status === 'completed' ? 'checked' : ''}/>
+            <label class ="form-check-label"> Mark as completed </label>
+            </div>
+
+            <span class="badge bg-${task.status ==='completed'?'sucsess': 'warning'} text-dark">${task.status}</span>
+
+
+
 
             <button class="btn btn-sm btn-danger mt-2 delete-btn" data-id="${task.id}">
             Delete 
@@ -129,12 +139,12 @@ function renderTasks(taskArray = getTasksService()) {
     //9. editButtons
 
     const editButtons = document.querySelectorAll('.edit-btn');
-    editButtons.forEach((btn)=>{
-        btn.addEventListener('click', function(){
+    editButtons.forEach((btn) => {
+        btn.addEventListener('click', function () {
             const id = this.getAttribute('data-id');
             const taskToEdit = getTasksService().find(task => task.id === id); //returns object with matching id
 
-            if(taskToEdit){
+            if (taskToEdit) {
                 document.getElementById('title').value = taskToEdit.title;
                 document.getElementById('description').value = taskToEdit.description;
                 document.getElementById('date').value = taskToEdit.dueDate;
@@ -142,19 +152,19 @@ function renderTasks(taskArray = getTasksService()) {
 
                 isEditMode = true;
                 editTaskId = taskToEdit.id;
-        
+
                 document.querySelector('button[type="submit"]').innerText = "Update Task";
             }
-     
+
         })
 
-        
+
 
 
     })
 
     //10.
-    document.getElementById('sortBy').addEventListener('change', function(){
+    document.getElementById('sortBy').addEventListener('change', function () {
         console.log(this)
         const sortKey = this.value  //this refers to dropdown field
         sortTasksService(sortKey);
@@ -162,13 +172,21 @@ function renderTasks(taskArray = getTasksService()) {
     })
 
     //11.
-    document.getElementById('search').addEventListener('input', function(){
+    document.getElementById('search').addEventListener('input', function () {
         console.log("this", this.value)
         const keyword = this.value.trim().toLowerCase();
         const filteredTasks = searchTaskService(keyword)
         renderTasks(filteredTasks)
     })
 
+    const toggleCheckboxes = document.querySelectorAll('.status-toggle');
+    toggleCheckboxes.forEach((checkbox)=>{
+        checkbox.addEventListener('change', function(){
+            const id = this.getAttribute('data-id');
+            toggleTaskStatusService(id)
+            renderTasks();
+        })
+    })
     console.log('Inside controller -> renderTask', taskArray)
 }
 

@@ -66,3 +66,13 @@ export function sortTasksService(key){
     const filtered = tasks.filter((task)=> task.title.toLowerCase().startsWith(keyword));
     return filtered;
 }
+
+    export function toggleTaskStatusService(id){
+        tasks = tasks.map((task)=>{
+            if(task.id === id){
+                task.status = task.status === 'completed'? 'pending':'completed'
+            }
+            return task;
+        });
+        saveTasksToLocal();
+    }
